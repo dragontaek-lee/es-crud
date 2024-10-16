@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { EsController } from './es.controller';
+import { EsService } from './es.service';
 import {ConfigModule, ConfigService} from "@nestjs/config";
 import {ElasticsearchModule} from "@nestjs/elasticsearch";
 
@@ -11,11 +11,14 @@ import {ElasticsearchModule} from "@nestjs/elasticsearch";
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         node: configService.get('ELASTICSEARCH_NODE'),
+        headers: {
+          Authorization: `ApiKey ${configService.get('ELASTICSEARCH_API_KEY')}`,
+        }
       }),
       inject: [ConfigService],
     })
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [EsController],
+  providers: [EsService],
 })
 export class AppModule {}
