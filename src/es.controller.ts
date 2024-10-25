@@ -22,4 +22,11 @@ export class EsController {
 
     return true;
   }
+
+  @Post('/bulk')
+  async createESDocumentsBulk() {
+    await this.esService.bulkInsert();
+
+    return true;
+  }
 }

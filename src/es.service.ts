@@ -56,10 +56,38 @@ export class EsService {
           index: indexName,
           document: {
             ...v,
+            id: v.m_id,
             date: dayjs(v.date).format('YYYY-MM-DDTHH:mm:ss')
           }
         })
       })
     ]);
   }
+
+  async bulkInsert() {
+    const now = dayjs().format('YYYY-MM-DD');
+    const indexName = `edu-train-log-${now}`
+
+    // await this.createIndex(indexName);
+
+    const convertedData = esDataDummy.map((v) => {
+      return {
+          id: v.m_id,
+        ...v,
+      }
+    });
+
+    const bulkResponse = await this.elasticsearchService.helpers.bulk({
+      datasource: convertedData,
+      onDocument (doc) {
+        return {
+          index: { _index: indexName, _id: doc.id }
+        }
+      }
+    });
+
+    console.log(bulkResponse);
+
+    return { bulkResponse };
+  };
 }
